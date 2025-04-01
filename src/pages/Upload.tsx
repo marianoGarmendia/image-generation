@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload as UploadIcon, ChevronDown, ArrowLeft } from 'lucide-react';
 import Header from '../components/Header';
@@ -103,19 +103,21 @@ export default function Upload() {
   const handleGenerationTypeSelect = (type: GenerationType) => {
     setGenerationType(type);
     if (type === 'background') {
-      setShowBackgroundOptions(true);
+      setShowBackgroundOptions(!showBackgroundOptions);
       setShowAnimationOptions(false);
     } else if (type === 'animation') {
-      setShowAnimationOptions(true);
+      setShowAnimationOptions(!showAnimationOptions);
       setShowBackgroundOptions(false);
     }
   };
+
+ 
 
   return (
     <div className="min-h-screen bg-gray-900">
       <Header />
       
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 ">
         <div className="px-4 py-6 sm:px-0">
           <div className="border-4 border-dashed border-gray-700 rounded-lg p-12">
             <div className="max-w-xl mx-auto text-center">
@@ -152,7 +154,7 @@ export default function Upload() {
 
             {preview && (
               <div className="mt-8 max-w-md mx-auto">
-                <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                <div className="bg-gray-800 rounded-lg shadow-lg ">
                   {isVideo ? (
                     <video
                       src={preview}
@@ -166,9 +168,9 @@ export default function Upload() {
                       className="w-full h-auto"
                     />
                   )}
-                  <div className="p-4 space-y-4">
+                  <div className="p-4 space-y-4 ">
                     {!selectedOption ? (
-                      <div className="space-y-3">
+                      <div className="space-y-3 ">
                         <div className="relative">
                           <button
                             onClick={() => handleGenerationTypeSelect('background')}
@@ -179,7 +181,7 @@ export default function Upload() {
                           </button>
                           
                           {showBackgroundOptions && (
-                            <div className="absolute w-full mt-1 bg-gray-700 rounded-md shadow-lg z-10">
+                            <div className="absolute w-full mt-1 bg-gray-700 rounded-md shadow-lg z-10 ">
                               <div className="py-1">
                                 <button
                                   onClick={() => handleOptionSelect('marble')}
