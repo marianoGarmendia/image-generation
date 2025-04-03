@@ -103,7 +103,7 @@ export default function Upload() {
 
   const handleUpload = async () => {
     if (!file) return;
-
+    setContent(null)
     const formData = new FormData();
     formData.append("image", file);
 
