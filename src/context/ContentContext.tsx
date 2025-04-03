@@ -5,6 +5,8 @@ interface ContentContextType {
     loading: boolean;
     setContent: Dispatch<SetStateAction<any>>;
     setLoading: Dispatch<SetStateAction<boolean>>;
+    status: { id: string; status: string } | null;
+    setStatus: Dispatch<SetStateAction<{ id: string; status: string } | null>>;
 }
 
 export interface Content {
@@ -24,13 +26,14 @@ interface Props {
 export function ContextProvider({ children }: Props) {
         const [content, setContent] = useState<Content | null>(null);
         const [loading, setLoading] = useState(true);
+        const [status, setStatus] = useState<{ id: string; status: string } | null>(null);
 
        
 
          
 
         return (
-            <ContentContext.Provider value={{ content, loading, setContent, setLoading }}>
+            <ContentContext.Provider value={{ content, loading, setContent, setLoading , status, setStatus}}>
                 {children}
             </ContentContext.Provider>
         );

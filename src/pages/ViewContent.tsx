@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Download, Trash2, Save, Loader2 } from "lucide-react";
 import Header from "../components/Header";
 import BackToHome from "../components/BackToHome";
@@ -8,8 +8,9 @@ import { useEffect, useRef } from "react";
 
 export default function ViewContent() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { content, setContent } = useContent();
+ 
+  const { content, setContent , status ,setStatus } = useContent();
+  
   const valorRef = useRef(false);
   const valor = valorRef.current;
 
@@ -47,14 +48,37 @@ export default function ViewContent() {
           }
         );
         const data = await contentRes.json();
-        const { result_url, type } = data;
-        setContent({ url: result_url, type });
-        valorRef.current = result_url;
+        const { jobId, status } = data;
+        setStatus({id: jobId, status});
+        // setContent({ url: result_url, type });
+        valorRef.current = jobId;
         toast.success("Contenido cargado");
       } catch (error) {}
     };
     get_content();
   }, [id]);
+
+
+  // Polling cada 10 segundos
+  useEffect(() => {
+    if (!status) return;
+
+    const interval = setInterval(async () => {
+      const res = await fetch(`https://imagemotionapp-production.up.railway.app/job/${status.id}`);
+      const data = await res.json();
+
+      if (data.status === "done") {
+       
+        setContent({ url: data.result_url, type: data.type });
+        clearInterval(interval);
+        toast.success("¡Contenido listo!");
+      } else {
+        console.log("⏳ Procesando...");
+      }
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, [status]);
 
   const handleDownload = () => {
     if (content?.url) {
