@@ -137,7 +137,7 @@ export default function ViewContent() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           <div className="p-6">
-            {status?.status === "done" && content.url ? (
+            {content && content.url ? (
               content.type === "image" ? (
                 <img src={content.url} alt="Contenido" />
               ) : content.type === "video" ? (
