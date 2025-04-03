@@ -9,7 +9,7 @@ import {
 import Header from "../components/Header";
 import BackToHome from "../components/BackToHome";
 import toast from "react-hot-toast";
-import { useContent } from "../context/ContentContext";
+import { useContent, Content } from "../context/ContentContext";
 
 type GenerationType = "background" | "animation" | null;
 type BackgroundOption =
@@ -53,7 +53,7 @@ export default function Upload() {
 
     try {
       const response = await fetch(
-        "https://72jdmlb6-3500.brs.devtunnels.ms/upload-image",
+        "https://imagemotionapp-production.up.railway.app/upload-image",
         {
           method: "POST",
           body: formData,
@@ -69,58 +69,63 @@ export default function Upload() {
 
       const data = await response.json();
       const fileName = data.fileName; // Assuming the response contains the file name
-
       console.log("fileName", fileName);
-
+      setContent((prevContent:Content) => ({...prevContent, background: selectedOption, animation: selectAnimation}));
+      
       toast.success("Archivo subido exitosamente");
-      try {
-        if (!fileName) throw new Error("File name not found");
-        console.log("animation", selectAnimation);
-        console.log("background", selectedOption);
-        const timeout = 120000; // 2 minutos en milisegundos
+      navigate(`/view/${data.id}`);
+      // try {
+      //   if (!fileName) throw new Error("File name not found");
+      //   console.log("animation", selectAnimation);
+      //   console.log("background", selectedOption);
+      //   const timeout = 120000; // 2 minutos en milisegundos
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+      //   const controller = new AbortController();
+      //   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-        const response = await fetch(
-          `https://72jdmlb6-3500.brs.devtunnels.ms/remove-background`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${
-                localStorage.getItem("token") ||
-                localStorage.getItem("devToken")
-              }`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              fileName,
-              background: selectedOption === "liso" ? null : selectedOption,
-              animation: selectAnimation,
-            }),
-            signal: controller.signal,  // Asociar el AbortController con la solicitud
-          }
-        );
 
-        clearTimeout(timeoutId);  // Limpiar el timeout si la solicitud es exitosa
-        const { result_url, type } = await response.json();
-        console.log("result_url", result_url);
-        console.log("type", type);
+      //   // TODO
+      //   // Obtener respuesta primero y despues ir a buscar la animacion
+      //   // Error de Cors?
+      //   const response = await fetch(
+      //     `https://72jdmlb6-3500.brs.devtunnels.ms/remove-background`,
+      //     {
+      //       method: "POST",
+      //       headers: {
+      //         Authorization: `Bearer ${
+      //           localStorage.getItem("token") ||
+      //           localStorage.getItem("devToken")
+      //         }`,
+      //         "Content-Type": "application/json",
+      //       },
+      //       body: JSON.stringify({
+      //         fileName,
+      //         background: selectedOption === "liso" ? null : selectedOption,
+      //         animation: selectAnimation,
+      //       }),
+      //       signal: controller.signal,  // Asociar el AbortController con la solicitud
+      //     }
+      //   );
 
-        setContent({
-          id: data.id,
-          url: result_url,
-          type: type,
-        });
-        navigate(`/view/${data.id}`);
-      } catch (error:any) {
-        if (error.name === 'AbortError') {
-          console.error('La solicitud fue cancelada por un timeout');
-        } else {
-          console.error('Error en la solicitud', error);
-        }
-        toast.error("Error al eliminar el fondo");
-      }
+      //   clearTimeout(timeoutId);  // Limpiar el timeout si la solicitud es exitosa
+      //   const { result_url, type } = await response.json();
+      //   console.log("result_url", result_url);
+      //   console.log("type", type);
+
+      //   setContent({
+      //     id: data.id,
+      //     url: result_url,
+      //     type: type,
+      //   });
+      //   navigate(`/view/${data.id}`);
+      // } catch (error:any) {
+      //   if (error.name === 'AbortError') {
+      //     console.error('La solicitud fue cancelada por un timeout');
+      //   } else {
+      //     console.error('Error en la solicitud', error);
+      //   }
+      //   toast.error("Error al eliminar el fondo");
+      // }
     } catch (error) {
       toast.error("Error al subir el archivo");
       console.error("Upload error:", error);

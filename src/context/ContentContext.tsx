@@ -7,10 +7,12 @@ interface ContentContextType {
     setLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-interface Content {
+export interface Content {
     id: string;
     url: string;
     type: "image" | "video";
+    animation: boolean;
+    background: string;
   }
 
 const ContentContext = createContext<ContentContextType | undefined>(undefined);

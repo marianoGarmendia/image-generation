@@ -5,77 +5,56 @@ import Header from "../components/Header";
 import BackToHome from "../components/BackToHome";
 import {useContent } from "../context/ContentContext";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 
 
 export default function ViewContent() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const {  content } = useContent();
+  const {  content , setContent} = useContent();
+  const {background, animation} = content
   // const [content, setContent] = useState<Content | null>(null);
 
-  // useEffect(() => {
-  //   const fetchContent = async () => {
-  //     try {
-  //       console.log(`Fetching content with ID: ${id}`);
-  //       if (!id) {
-  //         toast.error("ID no válido");
-  //         navigate("/");
-  //         return;
-  //       }
+ 
 
-  //       const response = await fetch(
-  //         `https://72jdmlb6-3500.brs.devtunnels.ms/images/${id}`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${
-  //               localStorage.getItem("token") ||
-  //               localStorage.getItem("devToken")
-  //             }`,
-  //           },
-  //         }
-  //       );
-  //       if (!response.ok) throw new Error("Failed to fetch content");
+  useEffect(() => {
 
-  //       // Verificar si la respuesta es una imagen o un JSON
-  //       const contentType = response.headers.get("Content-Type");
+    const get_content = async () => {
+      
+      try {
+        console.log("useEffect removeBackground");
+        if(!id) return;
+        console.log("fileName", id);
+        console.log("animation", animation);
+        console.log("background", background);
+        
+        
+        const content = await fetch(`https://imagemotionapp-production.up.railway.app/remove-background`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${
+              localStorage.getItem("token") || localStorage.getItem("devToken")
+            }`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 
+            fileName:  id,
+            animation ,
+            background: background === "liso" ? false : true
+           }),
+        })
+        const data = await content.json();
+        const {result_url , type} = data
+        setContent({url: result_url, type})
 
-  //       if (contentType && contentType.includes("application/json")) {
-  //         // Si la respuesta es un JSON, la parseamos como tal
-  //         const data = await response.json();
-  //         setContent(data);
-  //       } else if (contentType && contentType.includes("image")) {
-  //         // Si la respuesta es una imagen, la manejamos de otra forma
-  //         const imageBlob = await response.blob();
-  //         const imageUrl = URL.createObjectURL(imageBlob);
-  //         setContent({
-  //           id, // Asignar el ID recibido desde el parámetro
-  //           url: imageUrl, // URL de la imagen generada
-  //           type: "image", // Especificar que es una imagen
-  //         });
-  //       } else if (contentType && contentType.includes("video")) {
-  //         // Si la respuesta es un video
-  //         const videoBlob = await response.blob();
-  //         const videoUrl = URL.createObjectURL(videoBlob);
-
-  //         setContent({
-  //           id, // El ID del contenido
-  //           url: videoUrl, // URL del video
-  //           type: "video", // Tipo de contenido: 'video'
-  //         });
-  //       } else {
-  //         throw new Error("Unexpected content type");
-  //       }
-  //     } catch (error) {
-  //       toast.error("Error al cargar el contenido");
-  //       navigate("/");
-  //     }
-  //   };
-
-  //   fetchContent();
-  // }, [id, navigate]);
-
-
+        toast.success("Contenido cargado");
+      } catch (error) {
+        
+      }
+    }
+    get_content()
+  }, [id]);
 
   const handleDownload = () => {
     if (content?.url) {
@@ -85,7 +64,7 @@ export default function ViewContent() {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/content/${id}`, {
+      const response = await fetch(`https://imagemotionapp-production.up.railway.app/content/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${
@@ -131,7 +110,7 @@ export default function ViewContent() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           <div className="p-6">
-            {content ? (
+            {content.url ? (
               content.type === "image" ? (
                 <img src={content.url} alt="Contenido" />
               ) : content.type === "video" ? (
