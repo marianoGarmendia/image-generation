@@ -16,47 +16,47 @@ export default function ViewContent() {
 
   // const [content, setContent] = useState<Content | null>(null);
 
-  useEffect(() => {
-    if (valorRef.current) return;
-    const get_content = async () => {
-      try {
-        console.log("useEffect removeBackground");
-        if (!id) return;
-        if (!content) return;
+  // useEffect(() => {
+  //   if (valorRef.current) return;
+  //   const get_content = async () => {
+  //     try {
+  //       console.log("useEffect removeBackground");
+  //       if (!id) return;
+  //       if (!content) return;
 
-        console.log("fileName", id);
-        console.log("animation", content.animation);
-        console.log("background", content.background);
+  //       console.log("fileName", id);
+  //       console.log("animation", content.animation);
+  //       console.log("background", content.background);
 
-        const contentRes = await fetch(
-          `https://imagemotionapp-production.up.railway.app/remove-background`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${
-                localStorage.getItem("token") ||
-                localStorage.getItem("devToken")
-              }`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              fileName: id,
-              animation: content.animation,
-              background:
-                content.background === "liso" ? false : content.background,
-            }),
-          }
-        );
-        const data = await contentRes.json();
-        const { jobId, status } = data;
-        setStatus({id: jobId, status});
-        // setContent({ url: result_url, type });
-        valorRef.current = jobId;
-        toast.success("Contenido cargado");
-      } catch (error) {}
-    };
-    get_content();
-  }, [id]);
+  //       const contentRes = await fetch(
+  //         `https://imagemotionapp-production.up.railway.app/remove-background`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             Authorization: `Bearer ${
+  //               localStorage.getItem("token") ||
+  //               localStorage.getItem("devToken")
+  //             }`,
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             fileName: id,
+  //             animation: content.animation,
+  //             background:
+  //               content.background === "liso" ? false : content.background,
+  //           }),
+  //         }
+  //       );
+  //       const data = await contentRes.json();
+  //       const { jobId, status } = data;
+  //       setStatus({id: jobId, status});
+  //       // setContent({ url: result_url, type });
+  //       valorRef.current = jobId;
+  //       toast.success("Contenido cargado");
+  //     } catch (error) {}
+  //   };
+  //   get_content();
+  // }, [id]);
 
 
   // Polling cada 10 segundos
@@ -137,7 +137,7 @@ export default function ViewContent() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           <div className="p-6">
-            {content && content.url ? (
+            {status?.status === "done" && content.url ? (
               content.type === "image" ? (
                 <img src={content.url} alt="Contenido" />
               ) : content.type === "video" ? (

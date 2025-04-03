@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Upload as UploadIcon,
@@ -69,7 +69,12 @@ export default function Upload() {
   const [showAnimationOptions, setShowAnimationOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<BackgroundOption>(null);
   const [selectAnimation, setSelectAnimation] = useState(false);
-  const { setContent } = useContent();
+  const [dataId, setDataId] = useState<string | null>(null);
+  const { content, setContent , status ,setStatus } = useContent();
+    
+    const valorRef = useRef(false);
+    const valor = valorRef.current;
+  
   const navigate = useNavigate();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,15 +131,64 @@ export default function Upload() {
         background: selectedOption,
         animation: selectAnimation,
       }));
+      setDataId(data.id);
 
       toast.success("Archivo subido exitosamente");
-      navigate(`/view/${data.id}`);
+      
      
     } catch (error) {
       toast.error("Error al subir el archivo");
       console.error("Upload error:", error);
     }
   };
+
+  useEffect(() => {
+    if (valorRef.current) return;
+    const get_content = async () => {
+      try {
+        console.log("useEffect removeBackground");
+        if (!dataId) return;
+        if (!content) return;
+
+        console.log("fileName", dataId);
+        console.log("animation", content.animation);
+        console.log("background", content.background);
+
+        const contentRes = await fetch(
+          `https://imagemotionapp-production.up.railway.app/remove-background`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${
+                localStorage.getItem("token") ||
+                localStorage.getItem("devToken")
+              }`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              fileName: dataId,
+              animation: content.animation,
+              background:
+                content.background === "liso" ? false : content.background,
+            }),
+          }
+        );
+        const data = await contentRes.json();
+        const { jobId, status } = data;
+        setStatus({id: jobId, status});
+        
+        navigate(`/view/${dataId}`);
+        // setContent({ url: result_url, type });
+        valorRef.current  = jobId;
+        toast.success("Creando contenido");
+      } catch (error) {}
+    };
+    get_content();
+  }, [dataId]);
+
+
+
+
   const resetOptions = () => {
     setGenerationType(null);
     setSelectedOption(null);
