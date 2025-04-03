@@ -4,7 +4,7 @@ import {
   Upload as UploadIcon,
   ChevronDown,
   ArrowLeft,
-  LogIn,
+  
 } from "lucide-react";
 import Header from "../components/Header";
 import BackToHome from "../components/BackToHome";
@@ -22,6 +22,44 @@ type BackgroundOption =
   | "liso"
   | null;
 
+  const validateImage = (file: File): Promise<{ valid: boolean; error?: string }> => {
+    return new Promise((resolve) => {
+      const maxSize = 25 * 1024 * 1024; // 25MB
+      const minWidth = 64;
+      const minHeight = 64;
+      const maxWidth = 6000;
+      const maxHeight = 6000;
+  
+      if (file.size > maxSize) {
+        return resolve({ valid: false, error: "La imagen supera los 25MB" });
+      }
+  
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const { width, height } = img;
+        URL.revokeObjectURL(url); // limpiar memoria
+  
+        if (width < minWidth || height < minHeight) {
+          return resolve({ valid: false, error: "La resolución mínima es 64x64 píxeles" });
+        }
+  
+        if (width > maxWidth || height > maxHeight) {
+          return resolve({ valid: false, error: "La resolución máxima es 6000x6000 píxeles" });
+        }
+  
+        resolve({ valid: true });
+      };
+  
+      img.onerror = () => {
+        resolve({ valid: false, error: "No se pudo leer la imagen" });
+      };
+  
+      img.src = url;
+    });
+  };
+  
+
 export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -34,15 +72,28 @@ export default function Upload() {
   const { setContent } = useContent();
   const navigate = useNavigate();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setIsVideo(selectedFile.type.startsWith("video/"));
-      const previewUrl = URL.createObjectURL(selectedFile);
-      setPreview(previewUrl);
-      resetOptions();
+    if (!selectedFile) return;
+  
+    const isImage = selectedFile.type.startsWith("image/");
+    if (!isImage) {
+      toast.error("Solo se permiten archivos de imagen");
+      return;
     }
+  
+    const { valid, error } = await validateImage(selectedFile);
+    if (!valid) {
+      const err = error as string || "Error al validar la imagen";
+      toast.error(err);
+      return;
+    }
+  
+    setFile(selectedFile);
+    setIsVideo(false);
+    const previewUrl = URL.createObjectURL(selectedFile);
+    setPreview(previewUrl);
+    resetOptions();
   };
 
   const handleUpload = async () => {
@@ -70,62 +121,15 @@ export default function Upload() {
       const data = await response.json();
       const fileName = data.fileName; // Assuming the response contains the file name
       console.log("fileName", fileName);
-      setContent((prevContent:Content) => ({...prevContent, background: selectedOption, animation: selectAnimation}));
-      
+      setContent((prevContent: Content) => ({
+        ...prevContent,
+        background: selectedOption,
+        animation: selectAnimation,
+      }));
+
       toast.success("Archivo subido exitosamente");
       navigate(`/view/${data.id}`);
-      // try {
-      //   if (!fileName) throw new Error("File name not found");
-      //   console.log("animation", selectAnimation);
-      //   console.log("background", selectedOption);
-      //   const timeout = 120000; // 2 minutos en milisegundos
-
-      //   const controller = new AbortController();
-      //   const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-
-      //   // TODO
-      //   // Obtener respuesta primero y despues ir a buscar la animacion
-      //   // Error de Cors?
-      //   const response = await fetch(
-      //     `https://72jdmlb6-3500.brs.devtunnels.ms/remove-background`,
-      //     {
-      //       method: "POST",
-      //       headers: {
-      //         Authorization: `Bearer ${
-      //           localStorage.getItem("token") ||
-      //           localStorage.getItem("devToken")
-      //         }`,
-      //         "Content-Type": "application/json",
-      //       },
-      //       body: JSON.stringify({
-      //         fileName,
-      //         background: selectedOption === "liso" ? null : selectedOption,
-      //         animation: selectAnimation,
-      //       }),
-      //       signal: controller.signal,  // Asociar el AbortController con la solicitud
-      //     }
-      //   );
-
-      //   clearTimeout(timeoutId);  // Limpiar el timeout si la solicitud es exitosa
-      //   const { result_url, type } = await response.json();
-      //   console.log("result_url", result_url);
-      //   console.log("type", type);
-
-      //   setContent({
-      //     id: data.id,
-      //     url: result_url,
-      //     type: type,
-      //   });
-      //   navigate(`/view/${data.id}`);
-      // } catch (error:any) {
-      //   if (error.name === 'AbortError') {
-      //     console.error('La solicitud fue cancelada por un timeout');
-      //   } else {
-      //     console.error('Error en la solicitud', error);
-      //   }
-      //   toast.error("Error al eliminar el fondo");
-      // }
+     
     } catch (error) {
       toast.error("Error al subir el archivo");
       console.error("Upload error:", error);
@@ -358,6 +362,24 @@ export default function Upload() {
                       </div>
                     ) : (
                       <div className="space-y-3">
+                        {/* Resumen de selección */}
+                        <div className="p-4 bg-gray-700 rounded-md text-white text-left mb-4">
+                          <h4 className="font-semibold mb-2">
+                            Resumen de selección:
+                          </h4>
+                          <ul className="list-disc pl-5 text-sm space-y-1">
+                            <li>
+                              <span className="font-medium">Fondo:</span>{" "}
+                              {selectedOption
+                                ? selectedOption
+                                : "No seleccionado"}
+                            </li>
+                            <li>
+                              <span className="font-medium">Animación:</span>{" "}
+                              {selectAnimation ? "Sí" : "No"}
+                            </li>
+                          </ul>
+                        </div>
                         <button
                           onClick={resetOptions}
                           className="flex items-center text-gray-400 hover:text-white transition-colors"
@@ -365,6 +387,7 @@ export default function Upload() {
                           <ArrowLeft size={16} className="mr-1" />
                           Volver atrás
                         </button>
+
                         <button
                           onClick={handleUpload}
                           className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
