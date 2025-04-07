@@ -167,7 +167,7 @@ export default function Upload() {
             },
             body: JSON.stringify({
               fileName: dataId,
-              animation: content.animation,
+              animation: true,
               background:
                 null
             }),
@@ -202,16 +202,16 @@ export default function Upload() {
   //   setShowAnimationOptions(false);
   // };
 
-  const handleGenerationTypeSelect = (type: GenerationType) => {
-    setGenerationType(type);
-    if (type === "background") {
-      setShowBackgroundOptions(!showBackgroundOptions);
-      setShowAnimationOptions(false);
-    } else if (type === "animation") {
-      setShowAnimationOptions(!showAnimationOptions);
-      setShowBackgroundOptions(false);
-    }
-  };
+  // const handleGenerationTypeSelect = (type: GenerationType) => {
+  //   setGenerationType(type);
+  //   if (type === "background") {
+  //     setShowBackgroundOptions(!showBackgroundOptions);
+  //     setShowAnimationOptions(false);
+  //   } else if (type === "animation") {
+  //     setShowAnimationOptions(!showAnimationOptions);
+  //     setShowBackgroundOptions(false);
+  //   }
+  // };
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -333,7 +333,7 @@ export default function Upload() {
                         <div className="relative">
                           <button
                             onClick={() =>{
-                              handleGenerationTypeSelect("animation")
+                              // handleGenerationTypeSelect("animation")
                               handleUpload()}
                             }
                             className="w-full flex justify-between items-center bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"
