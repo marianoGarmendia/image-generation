@@ -169,7 +169,7 @@ export default function Upload() {
               fileName: dataId,
               animation: content.animation,
               background:
-                content.background === "liso" ? false : content.background,
+                null
             }),
           }
         );
@@ -196,11 +196,11 @@ export default function Upload() {
     setShowAnimationOptions(false);
   };
 
-  const handleOptionSelect = (option: BackgroundOption) => {
-    setSelectedOption(option);
-    setShowBackgroundOptions(false);
-    setShowAnimationOptions(false);
-  };
+  // const handleOptionSelect = (option: BackgroundOption) => {
+  //   setSelectedOption(option);
+  //   setShowBackgroundOptions(false);
+  //   setShowAnimationOptions(false);
+  // };
 
   const handleGenerationTypeSelect = (type: GenerationType) => {
     setGenerationType(type);
@@ -268,7 +268,7 @@ export default function Upload() {
                     {!selectedOption ? (
                       <div className="space-y-3 ">
                         <div className="relative">
-                          <button
+                          {/* <button
                             onClick={() =>
                               handleGenerationTypeSelect("background")
                             }
@@ -276,9 +276,9 @@ export default function Upload() {
                           >
                             <span>Generar Fondo</span>
                             <ChevronDown size={20} />
-                          </button>
+                          </button> */}
 
-                          {showBackgroundOptions && (
+                          {/* {showBackgroundOptions && (
                             <div className="absolute w-full mt-1 bg-gray-700 rounded-md shadow-lg z-10 ">
                               <div className="py-1">
                                 <button
@@ -327,21 +327,22 @@ export default function Upload() {
                                 </button>
                               </div>
                             </div>
-                          )}
+                          )} */}
                         </div>
 
                         <div className="relative">
                           <button
-                            onClick={() =>
+                            onClick={() =>{
                               handleGenerationTypeSelect("animation")
+                              handleUpload()}
                             }
                             className="w-full flex justify-between items-center bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"
                           >
-                            <span>Generar Fondo + Animación</span>
-                            <ChevronDown size={20} />
+                            <span>Generar animación</span>
+                            {/* <ChevronDown size={20} /> */}
                           </button>
 
-                          {showAnimationOptions && (
+                          {/* {showAnimationOptions && (
                             <div className="absolute w-full mt-1 bg-gray-700 rounded-md shadow-lg z-10">
                               <div className="py-1">
                                 <button
@@ -411,7 +412,7 @@ export default function Upload() {
                                 </button>
                               </div>
                             </div>
-                          )}
+                          )} */}
                         </div>
                       </div>
                     ) : (
@@ -422,12 +423,12 @@ export default function Upload() {
                             Resumen de selección:
                           </h4>
                           <ul className="list-disc pl-5 text-sm space-y-1">
-                            <li>
+                            {/* <li>
                               <span className="font-medium">Fondo:</span>{" "}
                               {selectedOption
                                 ? selectedOption
                                 : "No seleccionado"}
-                            </li>
+                            </li> */}
                             <li>
                               <span className="font-medium">Animación:</span>{" "}
                               {selectAnimation ? "Sí" : "No"}
