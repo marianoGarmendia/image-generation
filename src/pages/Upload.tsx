@@ -167,7 +167,7 @@ export default function Upload() {
             },
             body: JSON.stringify({
               fileName: dataId,
-              animation: true,
+              animation: selectAnimation,
               background:
                 null
             }),
@@ -268,15 +268,16 @@ export default function Upload() {
                     {!selectedOption ? (
                       <div className="space-y-3 ">
                         <div className="relative">
-                          {/* <button
+                          <button
                             onClick={() =>
-                              handleGenerationTypeSelect("background")
+                              // handleGenerationTypeSelect("background")
+                              setSelectAnimation(false)
                             }
                             className="w-full flex justify-between items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
                           >
-                            <span>Generar Fondo</span>
+                            <span>Quitar Fondo</span>
                             <ChevronDown size={20} />
-                          </button> */}
+                          </button>
 
                           {/* {showBackgroundOptions && (
                             <div className="absolute w-full mt-1 bg-gray-700 rounded-md shadow-lg z-10 ">
@@ -334,6 +335,7 @@ export default function Upload() {
                           <button
                             onClick={() =>{
                               // handleGenerationTypeSelect("animation")
+                              setSelectAnimation(true)
                               handleUpload()}
                             }
                             className="w-full flex justify-between items-center bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"
