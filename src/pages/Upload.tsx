@@ -101,7 +101,7 @@ export default function Upload() {
     resetOptions();
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async ({animation}:{animation:Boolean}) => {
     if (!file) return;
     setContent(null)
     const formData = new FormData();
@@ -129,7 +129,7 @@ export default function Upload() {
       setContent((prevContent: Content) => ({
         ...prevContent,
         background: selectedOption,
-        animation: selectAnimation,
+        animation: animation,
       }));
       setDataId(data.id);
 
@@ -271,8 +271,8 @@ export default function Upload() {
                           <button
                             onClick={() =>{
                               // handleGenerationTypeSelect("background")
-                              setSelectAnimation(false)
-                              handleUpload()}
+                          
+                              handleUpload({animation: false})}
                             }
                             className="w-full flex justify-between items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
                           >
@@ -336,8 +336,8 @@ export default function Upload() {
                           <button
                             onClick={() =>{
                               // handleGenerationTypeSelect("animation")
-                              setSelectAnimation(true)
-                              handleUpload()}
+                              
+                              handleUpload({animation: true})}
                             }
                             className="w-full flex justify-between items-center bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"
                           >
@@ -445,13 +445,13 @@ export default function Upload() {
                           <ArrowLeft size={16} className="mr-1" />
                           Volver atrás
                         </button>
-
+{/* 
                         <button
                           onClick={handleUpload}
                           className="w-full bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
                         >
                           Crear
-                        </button>
+                        </button> */}
                       </div>
                     )}
                   </div>
