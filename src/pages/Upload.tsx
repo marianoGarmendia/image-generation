@@ -269,9 +269,10 @@ export default function Upload() {
                       <div className="space-y-3 ">
                         <div className="relative">
                           <button
-                            onClick={() =>
+                            onClick={() =>{
                               // handleGenerationTypeSelect("background")
                               setSelectAnimation(false)
+                              handleUpload()}
                             }
                             className="w-full flex justify-between items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
                           >
