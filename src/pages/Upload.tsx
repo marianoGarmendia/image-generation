@@ -101,7 +101,7 @@ export default function Upload() {
     resetOptions();
   };
 
-  const handleUpload = async ({animation}:{animation:Boolean}) => {
+  const handleUpload = async ({animation , background}:{animation:Boolean, background: Boolean}) => {
     if (!file) return;
     setContent(null)
     const formData = new FormData();
@@ -128,7 +128,7 @@ export default function Upload() {
       console.log("fileName", fileName);
       setContent((prevContent: Content) => ({
         ...prevContent,
-        background: selectedOption,
+        background: background,
         animation: animation,
       }));
       setDataId(data.id);
@@ -272,7 +272,7 @@ export default function Upload() {
                             onClick={() =>{
                               // handleGenerationTypeSelect("background")
                           
-                              handleUpload({animation: false})}
+                              handleUpload({animation: false, background: false})}
                             }
                             className="w-full flex justify-between items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
                           >
@@ -337,11 +337,11 @@ export default function Upload() {
                             onClick={() =>{
                               // handleGenerationTypeSelect("animation")
                               
-                              handleUpload({animation: true})}
+                              handleUpload({animation: true, background: true})}
                             }
                             className="w-full flex justify-between items-center bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition"
                           >
-                            <span>Generar animación</span>
+                            <span>Generar animación + Fondo IA</span>
                             {/* <ChevronDown size={20} /> */}
                           </button>
 
