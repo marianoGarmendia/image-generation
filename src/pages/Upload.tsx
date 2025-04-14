@@ -11,6 +11,9 @@ import BackToHome from "../components/BackToHome";
 import toast from "react-hot-toast";
 import { useContent, Content } from "../context/ContentContext";
 
+const URL_DEV = "https://72jdmlb6-3500.brs.devtunnels.ms"
+const URL_PROD = "https://imagemotionapp-production.up.railway.app/";
+
 type GenerationType = "background" | "animation" | null;
 type BackgroundOption =
   | "marble"
@@ -58,6 +61,8 @@ type BackgroundOption =
       img.src = url;
     });
   };
+
+  
   
 
 export default function Upload() {
@@ -106,10 +111,11 @@ export default function Upload() {
     setContent(null)
     const formData = new FormData();
     formData.append("image", file);
+    
 
     try {
       const response = await fetch(
-        "https://imagemotionapp-production.up.railway.app/upload-image",
+        `${URL_PROD}/upload-image`,
         {
           method: "POST",
           body: formData,
@@ -155,7 +161,7 @@ export default function Upload() {
         console.log("background", content.background);
 
         const contentRes = await fetch(
-          `https://imagemotionapp-production.up.railway.app/remove-background`,
+          `${URL_PROD}/remove-background`,
           {
             method: "POST",
             headers: {
@@ -167,9 +173,9 @@ export default function Upload() {
             },
             body: JSON.stringify({
               fileName: dataId,
-              animation: selectAnimation,
+              animation: content.animation,
               background:
-                null
+                content.background
             }),
           }
         );
