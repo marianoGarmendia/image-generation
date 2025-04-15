@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import { useContent, Content } from "../context/ContentContext";
 
 const URL_DEV = "https://72jdmlb6-3500.brs.devtunnels.ms"
-const URL_PROD = "https://imagemotionapp-production.up.railway.app/";
+const URL_PROD = "https://imagemotionapp-production.up.railway.app";
 
 type GenerationType = "background" | "animation" | null;
 type BackgroundOption =

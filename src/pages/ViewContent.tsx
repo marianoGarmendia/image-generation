@@ -6,6 +6,8 @@ import { useContent } from "../context/ContentContext";
 import toast from "react-hot-toast";
 import { useEffect, useRef } from "react";
 const URL_DEV = "https://72jdmlb6-3500.brs.devtunnels.ms"
+const URL_PROD = "https://imagemotionapp-production.up.railway.app";
+
 
 export default function ViewContent() {
   const { id } = useParams<{ id: string }>();
@@ -65,7 +67,7 @@ export default function ViewContent() {
     if (!status) return;
 
     const interval = setInterval(async () => {
-      const res = await fetch(`${URL_DEV}/job/${status.id}`);
+      const res = await fetch(`${URL_PROD}/job/${status.id}`);
       const data = await res.json();
 
       if (data.status === "done") {
